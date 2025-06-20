@@ -1,1 +1,111 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(ConversorMillasApp());
+
+class ConversorMillasApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Conversor de Millas',
+      home: MillasAKilometrosPage(),
+    );
+  }
+}
+
+class MillasAKilometrosPage extends StatefulWidget {
+  @override
+  _MillasAKilometrosPageState createState() => _MillasAKilometrosPageState();
+}
+
+class _MillasAKilometrosPageState extends State<MillasAKilometrosPage> {
+  final TextEditingController _controller = TextEditingController();
+  String _resultado = '';
+  String _mensajeError = '';
+  double? _millas;
+  double? _kilometros;
+
+  void _convertir() {
+    setState(() {
+      _mensajeError = '';
+      _resultado = '';
+      _millas = null;
+      _kilometros = null;
+
+      if (_controller.text.trim().isEmpty) {
+        _mensajeError = 'Por favor ingrese un número';
+        return;
+      }
+
+      final entrada = double.tryParse(_controller.text);
+      if (entrada == null) {
+        _mensajeError = 'Entrada no válida';
+        return;
+      }
+
+      _millas = entrada;
+      _kilometros = entrada * 1.60934;
+      _resultado =
+          '${_millas!.toStringAsFixed(2)} millas equivalen a ${_kilometros!.toStringAsFixed(2)} km';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Conversor de millas a kilómetros')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Text(
+                'Conversor de millas a kilómetros',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _controller,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
+                labelText: 'Ingrese las millas',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            if (_mensajeError.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  _mensajeError,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _convertir,
+              child: Text('Convertir'),
+            ),
+            SizedBox(height: 20),
+            if (_resultado.isNotEmpty)
+              Text(
+                _resultado,
+                style: TextStyle(fontSize: 18),
+              ),
+            SizedBox(height: 20),
+            if (_millas != null && _kilometros != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Millas: ${_millas!.toStringAsFixed(2)}'),
+                  SizedBox(width: 20),
+                  Text('Kilómetros: ${_kilometros!.toStringAsFixed(2)}'),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
